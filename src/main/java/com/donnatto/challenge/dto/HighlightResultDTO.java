@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class HighlightResultDTO {
-    private AuthorDTO author;
+    private BaseResultDTO author;
     @JsonProperty("comment_text")
     private CommentTextDTO commentText;
     @JsonProperty("story_title")

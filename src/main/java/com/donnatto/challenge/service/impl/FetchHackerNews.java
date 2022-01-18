@@ -7,6 +7,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @Service
 public class FetchHackerNews implements FetchService {
 
@@ -26,8 +28,10 @@ public class FetchHackerNews implements FetchService {
             headers.add("user-agent", "Application");
             HttpEntity<Void> entity = new HttpEntity<>(headers);
             response = restTemplate.exchange(url, HttpMethod.GET, entity, AlgoliaResponseDTO.class);
-            if (response.getStatusCode() == HttpStatus.MOVED_PERMANENTLY && response.getHeaders().getLocation() != null) {
-                response = restTemplate.exchange(response.getHeaders().getLocation(), HttpMethod.GET, entity, AlgoliaResponseDTO.class);
+            if (response.getStatusCode() == HttpStatus.MOVED_PERMANENTLY) {
+                response = restTemplate.exchange(
+                        Objects.requireNonNull(response.getHeaders().getLocation()),
+                        HttpMethod.GET, entity, AlgoliaResponseDTO.class);
             }
         } catch (Exception e) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
